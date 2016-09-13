@@ -8,18 +8,17 @@
   },
   "author": "",
   "license": "ISC",
-  "devDependencies": {
-    "az-iot-bi-test": "0.0.2",
-    "az-iot-helper": "^0.1.1",
+  "devDependencies": {    
     "get-gulp-args": "0.0.1",
     "gulp": "^3.9.1",
     "gulp-help": "^1.6.1",
-    "gulp-log-capture": "0.0.6",
-    "gulp-rsync": "0.0.6",
-    "gulp-run": "^1.7.1",
-    "gulp-shell": "^0.5.2",
-    "q": "^1.4.1",
     "run-sequence": "^1.2.2",
-    "simple-ssh": "^0.9.0"
+    "az-iot-bi-test": "^0.0.2",
+    "simple-ssh": "^0.9.0",
+    "request": "^2.74.0",
+    "q": "^1.4.1",
+    "scp2": "^0.5.0",
+    "ssh2": "^0.5.0",
+    "unzip": "^0.1.11"
   }
 }
