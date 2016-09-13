@@ -7,8 +7,8 @@ var moment = require('moment');
 module.exports = function (context, iotHubMessage) {
     context.log('Message received: ' + JSON.stringify(iotHubMessage));
     context.bindings.outputTable = {
-        "partitionKey": moment().format('YYYYMMDD'),
-        "rowKey": moment().format('hhmmssSSS'),
+        "partitionKey": moment.utc().format('YYYYMMDD'),
+        "rowKey": moment.utc().format('hhmmssSSS'),
         "message": JSON.stringify(iotHubMessage)
     };
     context.done();
