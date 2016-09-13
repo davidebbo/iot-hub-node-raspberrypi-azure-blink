@@ -45,6 +45,10 @@ function sendMessageCallback(err, res) {
     totalBlinkTimes++;
     setTimeout(sendMessageAndBlink, 2000);
   }
+  else
+  {
+    process.exit();
+  }
 }
 
 var client = clientFromConnectionString(deviceConnectionString);
