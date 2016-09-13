@@ -14,7 +14,6 @@ var totalBlinkTimes = 0;
 
 wpi.setup('wpi');
 wpi.pinMode(CONFIG_PIN, wpi.OUTPUT);
-var isLedOn = false;
 
 var connectCallback = function (err) {
   if (err) {
@@ -32,8 +31,10 @@ function sendMessageAndBlink(){
   client.sendEvent(message, sendMessageCallback);
 
   // Blink while sending each message.
-  isLedOn = !isLedOn;
-  wpi.digitalWrite(CONFIG_PIN, isLedOn ? 1 : 0);
+  wpi.digitalWrite(CONFIG_PIN, 1);
+  setTimeout(function() {
+    wpi.digitalWrite(CONFIG_PIN, 0);
+  }, 100);
 }
 
 function sendMessageCallback(err, res) {
