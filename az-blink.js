@@ -29,17 +29,21 @@ function sendMessageAndBlink(){
   var message = new Message(JSON.stringify({ deviceId: config.iot_hub_device_id, messageId: totalBlinkTimes }));
   console.log("Sending message: " + message.getData());
   client.sendEvent(message, sendMessageCallback);
+}
 
-  // Blink while sending each message.
+function sendMessageCallback(err, res) {
+  if(err){
+    console.log('Message error: ' + err.toString());
+    return;
+  }
+
+  if(res) console.log('Message status: ' + res.constructor.name);
+
+  // Blink once after successfully sending one message.
   wpi.digitalWrite(CONFIG_PIN, 1);
   setTimeout(function() {
     wpi.digitalWrite(CONFIG_PIN, 0);
   }, 100);
-}
-
-function sendMessageCallback(err, res) {
-  if (err) console.log('Send message error: ' + err.toString());
-  if (res) console.log('Send message status: ' + res.constructor.name);
 
   if(totalBlinkTimes < MAX_BLINK_TIMES){
     totalBlinkTimes++;
