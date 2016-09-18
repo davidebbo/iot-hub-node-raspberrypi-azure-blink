@@ -3,22 +3,23 @@
 require('./gulp-common/raspberrypi-node.js').initTasks(gulp);
 
 // For DEMO purpose. We can discuss later whether we should put it to gulp-common.
-var storage = require('azure-storage');
-var moment = require('moment');
-var params = require('./parameter.json');
 var exec = require('child_process').exec;
-var defaultResourceGroup = 'iot-hub-test-rg';
+var moment = require('moment');
+var storage = require('azure-storage');
+
+var config = require('./config.json'); 
+var params = require('./arm-template-param.json').parameters;
 
 // TODO: allow user to pass resource group as parameter if default value is not what they want.
 gulp.task('read-message', function () {
-  var command = 'az storage account connection-string -g ' + defaultResourceGroup + ' -n ' + params.parameters.resoucePrefix.value + 'storage';
+  var command = 'az storage account connection-string -g ' + config.resource_group + ' -n ' + params.resoucePrefix.value + 'storage';
   exec(command, function (err, stdout, stderr) {
     if (err) {
-      console.log('ERROR:\n' + err);
+      console.error('ERROR:\n' + err);
       return;
     }
     if (stderr) {
-      console.log('Message from STDERR:\n' + stderr);
+      console.error('Message from STDERR:\n' + stderr);
     }
     if (stdout) {
       var connStr = JSON.parse(stdout).ConnectionString;
@@ -33,25 +34,24 @@ gulp.task('read-message', function () {
 
           tableService.queryEntities(tableName, query, null, function (error, result, response) {
             if (error) {
-              console.log('Fail to read messages:\n' + error);
+              console.error('Fail to read messages:\n' + error);
               setTimeout(readNewMessage, 0);
               return;
             }
+
+            timestamp = moment.utc().format('hhmmssSSS');
 
             // result.entries contains entities matching the query
             if (result.entries.length == 0) {
               console.log('\nNo New Message.');
-              setTimeout(readNewMessage, 0);
-              return;
-            }
-
-            console.log('\nNew Messages:');
-            timestamp = moment.utc().format('hhmmssSSS');
-            for (var i = 0; i < result.entries.length; i++) {
-              console.log(result.entries[i].message['_']);
-              // Update timestamp for next table query
-              if (result.entries[i].RowKey['_'] > timestamp) {
-                timestamp = result.entries[i].RowKey['_'];
+            } else {
+              console.log('\nNew Messages:');
+              for (var i = 0; i < result.entries.length; i++) {
+                console.log(result.entries[i].message['_']);
+                // Update timestamp for next table query
+                if (result.entries[i].RowKey['_'] > timestamp) {
+                  timestamp = result.entries[i].RowKey['_'];
+                }
               }
             }
             setTimeout(readNewMessage, 0);
@@ -60,10 +60,10 @@ gulp.task('read-message', function () {
 
         readNewMessage();
       } else {
-        console.log('ERROR: Fail to get connection string of Azure Storage account.')
+        console.error('ERROR: Fail to get connection string of Azure Storage account.')
       }
     } else {
-      console.log('ERROR: No output when getting connection string of Azure Storage account.');
+      console.error('ERROR: No output when getting connection string of Azure Storage account.');
     }
   });
 });
