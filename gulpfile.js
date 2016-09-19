@@ -28,6 +28,12 @@ gulp.task('read-message', function () {
         var condition = 'PartitionKey eq ? and RowKey gt ? ';
         var tableName = 'DeviceData';
         var timestamp = moment.utc().format('hhmmssSSS');
+        // Create table if not exists
+        tableService.createTableIfNotExists(tableName, function(error, result, response) {
+          if (error) {
+            console.log('Fail to create table: ' + error);
+          }
+        });
 
         function readNewMessage() {
           var query = new storage.TableQuery().where(condition, moment.utc().format('YYYYMMDD'), timestamp);
