@@ -39,8 +39,9 @@
     "iotHubKeyResource": "[resourceId('Microsoft.Devices/Iothubs/Iothubkeys', parameters('iotHubName'), variables('iotHubKeyName'))]",
     "functionAppName": "[concat(parameters('resoucePrefix'), 'functionApp')]",
     "receiveDeviceMessagesFunction": "ReceiveDeviceMessages",
+    "sendCloudMessagesFunction": "SendCloudMessages",
     "repoUrl": "https://github.com/Azure-Samples/iot-hub-node-raspberrypi-azure-blink",
-    "branch": "develop"
+    "branch": "kevinzha"
   },
   "resources": [
     {
@@ -128,7 +129,29 @@
                 }
               ]
             },
-            "test_data": "{ 'deviceId': 'mynewdevice', 'temperature': '42' }"
+            "test_data": "{ 'deviceId': 'myfirstdevice', 'temperature': '42' }"
+          }
+        },
+        {
+          "apiVersion": "2015-08-01",
+          "name": "[variables('sendCloudMessagesFunction')]",
+          "type": "functions",
+          "dependsOn": [
+            "[resourceId('Microsoft.Web/sites', variables('functionAppName'))]",
+            "[resourceId('Microsoft.Web/Sites/config', variables('functionAppName'), 'appsettings')]",
+            "[resourceId('Microsoft.Web/Sites/sourcecontrols', variables('functionAppName'), 'web')]"
+          ],
+          "properties": {
+            "config": {
+              "bindings": [
+                {
+                  "name": "input",
+                  "direction": "in",
+                  "type": "manualTrigger"
+                }
+              ]
+            },
+            "test_data": "{ 'deviceId': 'myfirstdevice' }"
           }
         }
       ],
