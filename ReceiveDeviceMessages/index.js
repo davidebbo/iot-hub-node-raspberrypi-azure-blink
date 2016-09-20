@@ -8,7 +8,7 @@ module.exports = function (context, iotHubMessage) {
     context.log('Message received: ' + JSON.stringify(iotHubMessage));
     context.bindings.outputTable = {
         "partitionKey": moment.utc().format('YYYYMMDD'),
-        "rowKey": moment.utc().format('hhmmssSSS'),
+        "rowKey": moment.utc().format('hhmmssSSS') + process.hrtime()[1] + '',
         "message": JSON.stringify(iotHubMessage)
     };
     context.done();
