@@ -3,58 +3,63 @@
 
 var Client = require('azure-iothub').Client;
 var Message = require('azure-iot-common').Message;
+var uuid = require('uuid');
 
 var connectionString = process.env.AzureIoTHubConnectionString;
 
-module.exports = function (context, input) {
+module.exports = function (context, req) {
+  context.log('Node.js HTTP trigger function processed a request. RequestUri=%s', req.originalUrl);
+
+  if (!req.query.deviceId && !(req.body && req.body.deviceId)) {
+    context.res = {
+      status: 400,
+      body: "Please pass a deviceId on the query string or in the request body."
+    };
+    context.done();
+  }
+
   var client = Client.fromConnectionString(connectionString);
-  var targetDevice = input.deviceId;
+  var targetDevice = req.query.deviceId || req.body.deviceId;
   var message = new Message('blink');
   message.ack = 'full';
-  message.messageId = generateMessageId();
+  message.messageId = uuid.v4();
 
   client.open(function (err) {
-    client.getFeedbackReceiver(receiveFeedback);
     if (err) {
-      context.error('Could not connect: ' + err.message);
+      var errMsg = 'ERROR: ' + err.message;
+      context.error(errMsg);
+      context.res = {
+        status: 400,
+        body: errMsg
+      };
+      context.done();
     } else {
-      context.log(message);
+      client.getFeedbackReceiver(receiveFeedback);
+      //context.log(message);
       client.send(targetDevice, message, function (err) {
         if (err) {
-          context.log('ERROR: ' + err);
+          var errMsg = 'ERROR: ' + err.message;
+          context.error(errMsg);
+          context.res = {
+            status: 503,
+            body: errMsg
+          };
+        } else {
+          context.res = {
+            status: 200,
+            body: 'Message sent successfully.'
+          };
         }
+        context.done();
       });
     }
   });
-  // Helper function to print results in the console
-  function printResultFor(op) {
-    return function printResult(err, res) {
-      if (err) {
-        context.log(op + ' error: ' + err.toString());
-      } else {
-        context.log(op + ' status: ' + res.constructor.name);
-      }
-    };
-  }
-
-  function generateMessageId() {
-    function s4() {
-      return Math.floor((1 + Math.random()) * 0x10000)
-        .toString(16)
-        .substring(1);
-    }
-    return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
-      s4() + '-' + s4() + s4() + s4();
-  }
 
   function receiveFeedback(err, receiver) {
     receiver.on('message', function (msg) {
-      context.log('Feedback message:')
-      context.log(msg.getData().toString('utf-8'));
+      context.log('Feedback message:\n' + msg.getData().toString('utf-8'))
     });
   }
-  context.done();
-
 }
 
 

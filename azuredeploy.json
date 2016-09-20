@@ -41,7 +41,7 @@
     "receiveDeviceMessagesFunction": "ReceiveDeviceMessages",
     "sendCloudMessagesFunction": "SendCloudMessages",
     "repoUrl": "https://github.com/Azure-Samples/iot-hub-node-raspberrypi-azure-blink",
-    "branch": "kevinzha"
+    "branch": "develop"
   },
   "resources": [
     {
@@ -145,9 +145,11 @@
             "config": {
               "bindings": [
                 {
-                  "name": "input",
+                  "webHookType": "",
+                  "name": "req",
+                  "type": "httpTrigger",
                   "direction": "in",
-                  "type": "manualTrigger"
+                  "authLevel": "anonymous"
                 }
               ]
             },

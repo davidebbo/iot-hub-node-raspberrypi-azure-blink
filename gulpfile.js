@@ -73,3 +73,36 @@ gulp.task('read-message', function () {
     }
   });
 });
+
+var https = require('https');
+var querystring = require('querystring');
+var sendMessageFunction = '/api/SendCloudMessages';
+
+gulp.task('send-message', function () {
+  var functionApp = params.resoucePrefix.value + 'functionApp.azurewebsites.net';
+  var postData = querystring.stringify({
+    'deviceId': config.iot_hub_device_id
+  });
+  var options = {
+    hostname: functionApp,
+    port: 443,
+    path: sendMessageFunction,
+    method: 'GET'
+  };
+
+  var req = https.request(options, (res) => {
+    console.log('statusCode:', res.statusCode);
+    console.log('headers:', res.headers);
+
+    res.on('data', (d) => {
+      process.stdout.write(d);
+    });
+  });
+  req.write(postData);
+  req.end();
+
+  req.on('error', (e) => {
+    console.error(e);
+  });
+
+});
