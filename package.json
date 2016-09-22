@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "define gulp tasks used to deploy and run azure blink code on device",
   "main": "gulpfile.js",
+  "license": "MIT",
   "devDependencies": {
     "gulp": "^3.9.1",
     "gulp-common": "Azure/gulp-common.git#v0.9.0"
