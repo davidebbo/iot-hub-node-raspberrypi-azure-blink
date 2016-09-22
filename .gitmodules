@@ -1,3 +1,0 @@
-[submodule "gulp-common"]
-	path = gulp-common
-	url = https://github.com/Azure/gulp-common.git
