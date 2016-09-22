@@ -25,32 +25,31 @@ var connectCallback = function (err) {
   }
 };
 
-function sendMessageAndBlink(){
+function sendMessageAndBlink() {
   var message = new Message(JSON.stringify({ deviceId: config.iot_hub_device_id, messageId: totalBlinkTimes }));
   console.log("Sending message: " + message.getData());
   client.sendEvent(message, sendMessageCallback);
 }
 
 function sendMessageCallback(err, res) {
-  if(err){
+  if (err) {
     console.log('Message error: ' + err.toString());
     return;
   }
 
-  if(res) console.log('Message status: ' + res.constructor.name);
+  if (res) console.log('Message status: ' + res.constructor.name);
 
   // Blink once after successfully sending one message.
   wpi.digitalWrite(CONFIG_PIN, 1);
-  setTimeout(function() {
+  setTimeout(function () {
     wpi.digitalWrite(CONFIG_PIN, 0);
   }, 100);
 
-  if(totalBlinkTimes < MAX_BLINK_TIMES){
+  if (totalBlinkTimes < MAX_BLINK_TIMES) {
     totalBlinkTimes++;
     setTimeout(sendMessageAndBlink, 2000);
   }
-  else
-  {
+  else {
     process.exit();
   }
 }
