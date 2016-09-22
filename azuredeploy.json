@@ -44,6 +44,11 @@
   },
   "resources": [
     {
+      "apiVersion": "[variables('iotHubVersion')]",
+      "name": "[concat(parameters('iotHubName'), '/events/console')]",
+      "type": "Microsoft.Devices/iotHubs/eventhubEndpoints/ConsumerGroups"
+    },
+    {
       "apiVersion": "[variables('storageVersion')]",
       "location": "[variables('location')]",
       "name": "[variables('storageName')]",
