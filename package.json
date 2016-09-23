@@ -1,7 +1,7 @@
 {
   "name": "raspberrypi-azure-blink-gulp-script",
   "version": "1.0.0",
-  "description": "define gulp tasks used to deploy and run azure blink code on device",
+  "description": "Gulp tasks supporting sample deployment",
   "main": "gulpfile.js",
   "license": "MIT",
   "devDependencies": {
