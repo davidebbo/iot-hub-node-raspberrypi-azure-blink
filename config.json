@@ -4,8 +4,10 @@
   "device_password": "raspberry",
   "resource_group": "[resource group of your Azure Storage]",
   "iot_hub_host_name": "[IoT hub host name]",
+  "iot_hub_connection_string": "[IoT hub connection string]",
   "iot_hub_device_id": "[IoT hub device id]",
   "iot_hub_device_key": "[IoT hub device key]",
+  "iot_hub_consumer_group_name": "cg1",
   "project_folder": "./node-pi-az-blink",
   "start_file": "az-blink.js",
   "ssh_port": 22
