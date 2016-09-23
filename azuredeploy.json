@@ -26,6 +26,14 @@
       "metadata": {
         "description": "The pricing tier for the hosting plan for Azure Function."
       }
+    },
+    "consumerGroupName": {
+      "type": "string",
+      "minLength": 3,
+      "defaultValue": "cg1",
+      "metadata": {
+        "description": "Name of device-to-cloud consumer group to provision on the IoT Hub instance."
+      }
     }
   },
   "variables": {
@@ -45,7 +53,7 @@
   "resources": [
     {
       "apiVersion": "[variables('iotHubVersion')]",
-      "name": "[concat(parameters('iotHubName'), '/events/console')]",
+      "name": "[concat(parameters('iotHubName'), '/events/',parameters('consumerGroupName'))]",
       "type": "Microsoft.Devices/iotHubs/eventhubEndpoints/ConsumerGroups"
     },
     {

@@ -3,13 +3,16 @@
   "contentVersion": "1.0.0.0",
   "parameters": {
     "iotHubName": {
-      "value": "[your IoT Hub name]"
+      "value": "zhijzhao-hub"
     },
     "resoucePrefix": {
-      "value": "[prefix string for new resources]"
+      "value": "zhijzhao6"
     },
     "functionSku": {
       "value": "Free"
+    },
+    "consumerGroupName": {
+      "value": "cg1"
     }
   }
 }
