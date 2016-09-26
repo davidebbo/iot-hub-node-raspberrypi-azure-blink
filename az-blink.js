@@ -4,7 +4,19 @@ var wpi = require('wiring-pi');
 var config = require('./config.json');
 var Message = require('azure-iot-device').Message;
 var clientFromConnectionString = require('azure-iot-device-amqp').clientFromConnectionString;
-var deviceConnectionString = 'HostName=' + config.iot_hub_host_name + ';DeviceId=' + config.iot_hub_device_id + ';SharedAccessKey=' + config.iot_hub_device_key;
+
+function getDeviceId(connectionString) {
+  var elements = connectionString.split(';');
+  for(var i = 0; i < elements.length; i++)
+  {
+    if(elements[i].startsWith('DeviceId='))
+    {
+      return elements[i].slice(9);
+    }
+  }
+}
+
+var deviceId = getDeviceId(config.iot_device_connection_string);
 
 // GPIO pin of the LED
 var CONFIG_PIN = 7;
@@ -26,7 +38,7 @@ var connectCallback = function (err) {
 };
 
 function sendMessageAndBlink() {
-  var message = new Message(JSON.stringify({ deviceId: config.iot_hub_device_id, messageId: totalBlinkTimes }));
+  var message = new Message(JSON.stringify({ deviceId: deviceId, messageId: totalBlinkTimes }));
   console.log("[Device] Sending message #" + totalBlinkTimes + ": " + message.getData());
   client.sendEvent(message, sendMessageCallback);
 }
@@ -52,5 +64,5 @@ function sendMessageCallback(err, res) {
   }
 }
 
-var client = clientFromConnectionString(deviceConnectionString);
+var client = clientFromConnectionString(config.iot_device_connection_string);
 client.open(connectCallback);
