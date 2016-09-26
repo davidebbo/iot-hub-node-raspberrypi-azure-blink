@@ -28,9 +28,9 @@ var readIoTHub = function () {
     .catch(printError);
 }
 
-var callback = function () {
+var cleanup = function () {
   iotHubClient.close();
 }
 
 module.exports.readIoTHub = readIoTHub;
-module.exports.callback = callback;
+module.exports.cleanup = cleanup;

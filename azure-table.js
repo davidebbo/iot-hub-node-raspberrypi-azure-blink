@@ -65,7 +65,7 @@ var readAzureTable = function () {
   });
 }
 
-var callback = function () {
+var cleanup = function () {
   // Wait 5 more seconds so that Azure function has the chance to process sent messages.
   setTimeout(function () {
     stopReadAzureTable = true;
@@ -75,4 +75,4 @@ var callback = function () {
 
 
 module.exports.readAzureTable = readAzureTable;
-module.exports.callback = callback;
+module.exports.cleanup = cleanup;
