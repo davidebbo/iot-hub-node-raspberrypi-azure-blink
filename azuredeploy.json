@@ -141,7 +141,7 @@
                 }
               ]
             },
-            "test_data": "{ 'deviceId': 'mynewdevice', 'temperature': '42' }"
+            "test_data": "{ 'deviceId': 'myraspberrypi', 'messageId': '1' }"
           }
         }
       ],

@@ -33,7 +33,12 @@ var readAzureTable = function () {
 
           tableService.queryEntities(tableName, query, null, function (error, result, response) {
             if (error) {
-              console.error('Fail to read messages:\n' + error);
+              // Table not found.
+              if (error.statusCode && error.statusCode == 404) {
+                console.error('ERROR: Table not found. Something might be wrong. Please go to troubleshooting page for more information.')
+              } else {
+                console.error('ERROR:\n' + error);
+              }
               setTimeout(readNewMessages, 0);
               return;
             }
