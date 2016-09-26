@@ -1,3 +1,6 @@
+/*
+* IoT Hub Raspberry Pi NodeJS Azure Blink - Microsoft Sample Code - Copyright (c) 2016 - Licensed MIT
+*/
 'use strict';
 
 var exec = require('child_process').exec;
@@ -28,10 +31,10 @@ var readAzureTable = function () {
 
         var messageCount = 0;
 
-        function readNewMessages() {
+        var readNewMessages = function () {
           var query = new storage.TableQuery().where(condition, moment.utc().format('YYYYMMDD'), timestamp);
 
-          tableService.queryEntities(tableName, query, null, function (error, result, response) {
+          tableService.queryEntities(tableName, query, null, function (error, result) {
             if (error) {
               // Table not found.
               if (error.statusCode && error.statusCode == 404) {
@@ -76,8 +79,6 @@ var cleanup = function () {
     stopReadAzureTable = true;
   }, 5000);
 }
-
-
 
 module.exports.readAzureTable = readAzureTable;
 module.exports.cleanup = cleanup;
