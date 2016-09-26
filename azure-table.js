@@ -1,3 +1,5 @@
+'use strict'
+
 var exec = require('child_process').exec;
 var moment = require('moment');
 var storage = require('azure-storage');
@@ -26,20 +28,21 @@ var readAzureTable = function () {
 
         var messageCount = 0;
 
-        function readNewMessage() {
+        function readNewMessages() {
           var query = new storage.TableQuery().where(condition, moment.utc().format('YYYYMMDD'), timestamp);
 
           tableService.queryEntities(tableName, query, null, function (error, result, response) {
             if (error) {
               console.error('Fail to read messages:\n' + error);
-              setTimeout(readNewMessage, 0);
+              setTimeout(readNewMessages, 0);
               return;
             }
 
             // result.entries contains entities matching the query
             if (result.entries.length > 0) {
               for (var i = 0; i < result.entries.length; i++) {
-                console.log('[Azure table] Read message #' + ++messageCount + ': ' + result.entries[i].message['_'] + '\n');
+                ++messageCount;
+                console.log('[Azure Table] Read message #' + messageCount + ': ' + result.entries[i].message['_'] + '\n');
 
                 if (result.entries[i].RowKey['_'] > timestamp) {
                   timestamp = result.entries[i].RowKey['_'];
@@ -47,12 +50,12 @@ var readAzureTable = function () {
               }
             }
             if (!stopReadAzureTable) {
-              setTimeout(readNewMessage, 0);
+              setTimeout(readNewMessages, 0);
             }
           });
         }
 
-        readNewMessage();
+        readNewMessages();
       } else {
         console.error('ERROR: Fail to get connection string of Azure Storage account.')
       }
@@ -63,7 +66,7 @@ var readAzureTable = function () {
 }
 
 var callback = function (deferred) {
-  // Wait 5 more sends so that Azure function has the chance to process sent messages.
+  // Wait 5 more seconds so that Azure function has the chance to process sent messages.
   setTimeout(function () {
     stopReadAzureTable = true;
     deferred.resolve();
