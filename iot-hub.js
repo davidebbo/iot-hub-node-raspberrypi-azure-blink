@@ -28,11 +28,8 @@ var readIoTHub = function () {
     .catch(printError);
 }
 
-var callback = function (deferred) {
+var callback = function () {
   iotHubClient.close();
-
-  if (deferred)
-    deferred.resolve();
 }
 
 module.exports.readIoTHub = readIoTHub;
