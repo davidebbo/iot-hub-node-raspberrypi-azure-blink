@@ -1,4 +1,4 @@
-'use strict'
+'use strict';
 
 var EventHubClient = require('azure-event-hubs').Client;
 var config = require('./config.json');
