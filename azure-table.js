@@ -1,4 +1,4 @@
-'use strict'
+'use strict';
 
 var exec = require('child_process').exec;
 var moment = require('moment');
@@ -70,15 +70,14 @@ var readAzureTable = function () {
   });
 }
 
-var callback = function (deferred) {
+var cleanup = function () {
   // Wait 5 more seconds so that Azure function has the chance to process sent messages.
   setTimeout(function () {
     stopReadAzureTable = true;
-    deferred.resolve();
   }, 5000);
 }
 
 
 
 module.exports.readAzureTable = readAzureTable;
-module.exports.callback = callback;
+module.exports.cleanup = cleanup;

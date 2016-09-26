@@ -1,4 +1,4 @@
-'use strict'
+'use strict';
 
 var EventHubClient = require('azure-event-hubs').Client;
 var config = require('./config.json');
@@ -28,12 +28,9 @@ var readIoTHub = function () {
     .catch(printError);
 }
 
-var callback = function (deferred) {
+var cleanup = function () {
   iotHubClient.close();
-
-  if (deferred)
-    deferred.resolve();
 }
 
 module.exports.readIoTHub = readIoTHub;
-module.exports.callback = callback;
+module.exports.cleanup = cleanup;
