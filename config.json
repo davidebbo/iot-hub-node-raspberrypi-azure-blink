@@ -7,6 +7,6 @@
   "iot_device_connection_string": "[IoT device connection string]",
   "iot_hub_consumer_group_name": "cg1",
   "project_folder": "./node-pi-az-blink",
-  "start_file": "az-blink.js",
+  "start_file": "app.js",
   "ssh_port": 22
 }

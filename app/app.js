@@ -1,3 +1,6 @@
+/*
+* IoT Hub Raspberry Pi NodeJS Azure Blink - Microsoft Sample Code - Copyright (c) 2016 - Licensed MIT
+*/
 'use strict';
 
 var wpi = require('wiring-pi');
@@ -41,7 +44,7 @@ function sendMessageAndBlink() {
   client.sendEvent(message, sendMessageCallback);
 }
 
-function sendMessageCallback(err, res) {
+function sendMessageCallback(err) {
   if (err) {
     console.log('Message error: ' + err.toString());
     return;
