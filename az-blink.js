@@ -7,10 +7,8 @@ var clientFromConnectionString = require('azure-iot-device-amqp').clientFromConn
 
 function getDeviceId(connectionString) {
   var elements = connectionString.split(';');
-  for(var i = 0; i < elements.length; i++)
-  {
-    if(elements[i].startsWith('DeviceId='))
-    {
+  for (var i = 0; i < elements.length; i++) {
+    if (elements[i].startsWith('DeviceId=')) {
       return elements[i].slice(9);
     }
   }
