@@ -10,6 +10,9 @@
     },
     "functionSku": {
       "value": "Free"
+    },
+    "consumerGroupName": {
+      "value": "cg1"
     }
   }
 }

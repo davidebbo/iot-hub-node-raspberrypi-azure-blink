@@ -1,82 +1,51 @@
-﻿var gulp = require('gulp-help')(require('gulp'));
+﻿/*
+* IoT Hub Raspberry Pi NodeJS Azure Blink - Microsoft Sample Code - Copyright (c) 2016 - Licensed MIT
+*/
+'use strict';
 
-require('./gulp-common/raspberrypi-node.js').initTasks(gulp);
+var eslint = require('gulp-eslint');
+var gulp = require('gulp');
+var args = require('get-gulp-args')();
 
-// For DEMO purpose. We can discuss later whether we should put it to gulp-common.
-var exec = require('child_process').exec;
-var moment = require('moment');
-var storage = require('azure-storage');
+var doesReadStorage = args['read-storage'];
+var receiveMessages = doesReadStorage ? require('./azure-table.js').readAzureTable : require('./iot-hub.js').readIoTHub;
+var cleanup = doesReadStorage ? require('./azure-table.js').cleanup : require('./iot-hub.js').cleanup;
 
-var config = require('./config.json'); 
-var params = require('./arm-template-param.json').parameters;
+function initTasks(gulp) {
+  var runSequence = require('run-sequence').use(gulp);
 
-// TODO: allow user to pass resource group as parameter if default value is not what they want.
-gulp.task('read-message', function () {
-  var command = 'az storage account connection-string -g ' + config.resource_group + ' -n ' + params.resoucePrefix.value + 'storage';
-  exec(command, function (err, stdout, stderr) {
-    if (err) {
-      console.error('ERROR:\n' + err);
-      return;
-    }
-    if (stderr) {
-      console.error('Message from STDERR:\n' + stderr);
-    }
-    if (stdout) {
-      var connStr = JSON.parse(stdout).ConnectionString;
-      if (connStr) {
-        var tableService = storage.createTableService(connStr);
-        var condition = 'PartitionKey eq ? and RowKey gt ? ';
-        var tableName = 'DeviceData';
-        var timestamp = moment.utc().format('hhmmssSSS');
-        // Create table if not exists
-        tableService.createTableIfNotExists(tableName, function(error, result, response) {
-          if (error) {
-            console.log('Fail to create table: ' + error);
-          }
-        });
+  require('gulp-common')(gulp, 'raspberrypi-node');
 
-        function readNewMessage() {
-          var query = new storage.TableQuery().where(condition, moment.utc().format('YYYYMMDD'), timestamp);
+  gulp.task('cleanup', false, cleanup);
 
-          tableService.queryEntities(tableName, query, null, function (error, result, response) {
-            if (error) {
-              console.error('Fail to read messages:\n' + error);
-              setTimeout(readNewMessage, 0);
-              return;
-            }
+  gulp.task('send-device-to-cloud-messages', false, function () {
+    runSequence('run-internal', 'cleanup');
+  })
 
-            timestamp = moment.utc().format('hhmmssSSS');
+  if (doesReadStorage) {
+    gulp.task('query-table-storage', false, receiveMessages);
+    gulp.task('run', 'Runs deployed sample on the board', ['query-table-storage', 'send-device-to-cloud-messages']);
+  }
+  else {
+    gulp.task('query-iot-hub-messages', false, receiveMessages);
+    gulp.task('run', 'Runs deployed sample on the board', ['query-iot-hub-messages', 'send-device-to-cloud-messages']);
+  }
+}
 
-            // result.entries contains entities matching the query
-            if (result.entries.length == 0) {
-              console.log('\nNo New Message.');
-            } else {
-              console.log('\nNew Messages:');
-              for (var i = 0; i < result.entries.length; i++) {
-                console.log(result.entries[i].message['_']);
-                // Update timestamp for next table query
-                if (result.entries[i].RowKey['_'] > timestamp) {
-                  timestamp = result.entries[i].RowKey['_'];
-                }
-              }
-            }
-            setTimeout(readNewMessage, 0);
-          });
-        }
-
-        readNewMessage();
-      } else {
-        console.error('ERROR: Fail to get connection string of Azure Storage account.')
-      }
-    } else {
-      console.error('ERROR: No output when getting connection string of Azure Storage account.');
-    }
-  });
+gulp.task('lint', () => {
+  return gulp.src([
+    './**/*.js',
+    '!node_modules/**',
+  ])
+    .pipe(eslint())
+    .pipe(eslint.format())
+    .pipe(eslint.failAfterError());
 });
 
 var https = require('https');
 var querystring = require('querystring');
 var sendMessageFunction = '/api/SendCloudMessages';
+var params = require('./arm-template-param.json').parameters;
 
 gulp.task('send-message', function () {
   var functionApp = params.resoucePrefix.value + 'functionApp.azurewebsites.net';
@@ -106,3 +75,6 @@ gulp.task('send-message', function () {
   });
 
 });
+
+initTasks(gulp);
+
