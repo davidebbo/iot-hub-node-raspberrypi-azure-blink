@@ -14,7 +14,7 @@ var cleanup = doesReadStorage ? require('./azure-table.js').cleanup : require('.
 function initTasks(gulp) {
   var runSequence = require('run-sequence').use(gulp);
 
-  require('gulp-common')(gulp, 'raspberrypi-node');
+  require('gulp-common')(gulp, 'raspberrypi-node', { appName: 'az-blink' });
 
   gulp.task('cleanup', false, cleanup);
 
@@ -25,8 +25,7 @@ function initTasks(gulp) {
   if (doesReadStorage) {
     gulp.task('query-table-storage', false, receiveMessages);
     gulp.task('run', 'Runs deployed sample on the board', ['query-table-storage', 'send-device-to-cloud-messages']);
-  }
-  else {
+  } else {
     gulp.task('query-iot-hub-messages', false, receiveMessages);
     gulp.task('run', 'Runs deployed sample on the board', ['query-iot-hub-messages', 'send-device-to-cloud-messages']);
   }
