@@ -14,9 +14,7 @@ var cleanup = doesReadStorage ? require('./azure-table.js').cleanup : require('.
 function initTasks(gulp) {
   var runSequence = require('run-sequence').use(gulp);
 
-  var options = {};
-  options.appName = 'az-blink';
-  require('gulp-common')(gulp, 'raspberrypi-node', options);
+  require('gulp-common')(gulp, 'raspberrypi-node', { appName: 'az-blink' });
 
   gulp.task('cleanup', false, cleanup);
 
