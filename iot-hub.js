@@ -17,12 +17,15 @@ var readIoTHub = function () {
     console.log('[IoT Hub] Received message: ' + JSON.stringify(message.body) + '\n');
   };
 
+  // Only receive messages sent to IoT Hub after this time. 
+  var startTime = Date.now() - 10000;
+
   iotHubClient = EventHubClient.fromConnectionString(config.iot_hub_connection_string);
   iotHubClient.open()
     .then(iotHubClient.getPartitionIds.bind(iotHubClient))
     .then(function (partitionIds) {
       return partitionIds.map(function (partitionId) {
-        return iotHubClient.createReceiver(config.iot_hub_consumer_group_name, partitionId, { 'startAfterTime': Date.now() - 10000 })
+        return iotHubClient.createReceiver(config.iot_hub_consumer_group_name, partitionId, { 'startAfterTime': startTime })
           .then(function (receiver) {
             receiver.on('errorReceived', printError);
             receiver.on('message', printMessage);
