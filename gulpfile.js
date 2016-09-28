@@ -45,6 +45,7 @@ gulp.task('lint', () => {
 var https = require('https');
 var querystring = require('querystring');
 var sendMessageFunction = '/api/SendCloudMessages';
+var config = require('./config.json');
 var params = require('./arm-template-param.json').parameters;
 
 gulp.task('send-message', function () {
