@@ -25,6 +25,10 @@ Please follow the [step-by-step instructions](https://aka.ms/rpi-node-3) for det
 ### Deploy and run
 
 ```bash
+npm install
+```
+
+```bash
 gulp install-tools
 gulp deploy
 gulp run
