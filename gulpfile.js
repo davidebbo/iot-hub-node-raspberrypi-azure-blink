@@ -11,6 +11,8 @@ var doesReadStorage = args['read-storage'];
 var receiveMessages = doesReadStorage ? require('./azure-table.js').readAzureTable : require('./iot-hub.js').readIoTHub;
 var cleanup = doesReadStorage ? require('./azure-table.js').cleanup : require('./iot-hub.js').cleanup;
 
+var sendMessage = require('./azure-func.js').sendMessage;
+
 function initTasks(gulp) {
   var runSequence = require('run-sequence').use(gulp);
 
@@ -29,6 +31,8 @@ function initTasks(gulp) {
     gulp.task('query-iot-hub-messages', false, receiveMessages);
     gulp.task('run', 'Runs deployed sample on the board', ['query-iot-hub-messages', 'send-device-to-cloud-messages']);
   }
+
+  gulp.task('send-message', false, sendMessage);
 }
 
 gulp.task('lint', () => {

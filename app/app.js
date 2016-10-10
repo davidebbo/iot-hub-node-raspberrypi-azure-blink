@@ -30,13 +30,23 @@ wpi.pinMode(CONFIG_PIN, wpi.OUTPUT);
 
 var connectCallback = function (err) {
   if (err) {
-    console.log('Could not connect: ' + err);
+    console.log('[Device] Could not connect: ' + err);
   } else {
-    console.log('Client connected');
-
-    sendMessageAndBlink();
+    console.log('[Device] Client connected');
+    if (args.listen) {
+      receiveMessageAndBlink();
+    } else {
+      sendMessageAndBlink();
+    }
   }
 };
+
+function blinkLED() {
+  wpi.digitalWrite(CONFIG_PIN, 1);
+  setTimeout(function () {
+    wpi.digitalWrite(CONFIG_PIN, 0);
+  }, 100);
+}
 
 function sendMessageAndBlink() {
   var message = new Message(JSON.stringify({ deviceId: deviceId, messageId: totalBlinkTimes }));
@@ -46,23 +56,36 @@ function sendMessageAndBlink() {
 
 function sendMessageCallback(err) {
   if (err) {
-    console.log('Message error: ' + err.toString());
+    console.log('[Device] Sending message error: ' + err.toString());
     return;
   }
 
   // Blink once after successfully sending one message.
-  wpi.digitalWrite(CONFIG_PIN, 1);
-  setTimeout(function () {
-    wpi.digitalWrite(CONFIG_PIN, 0);
-  }, 100);
+  blinkLED();
 
   if (totalBlinkTimes < MAX_BLINK_TIMES) {
     totalBlinkTimes++;
     setTimeout(sendMessageAndBlink, 2000);
-  }
-  else {
+  } else {
     process.exit();
   }
+}
+
+function receiveMessageAndBlink() {
+  client.on('message', function (msg) {
+    console.log('[Device] Receive message: Id: ' + msg.messageId + ' Body: ' + JSON.parse(msg.getData().toString('utf-8')));
+    client.complete(msg, completeMessageCallback);
+  });
+}
+
+function completeMessageCallback(err, res) {
+  if (err) {
+    console.log('[Device] Complete message error: ' + err.toString());
+    return;
+  }
+  console.log('[Device] Complete message status: ' + res.constructor.name);
+  // Blink once after successfully completing one message.
+  blinkLED();
 }
 
 var client = clientFromConnectionString(config.iot_device_connection_string);

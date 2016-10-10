@@ -6,7 +6,7 @@
       "value": "[your IoT Hub name]"
     },
     "resoucePrefix": {
-      "value": "[prefix string for new resources]"
+      "value": "kevinzha160928"
     },
     "functionSku": {
       "value": "Free"
