@@ -30,9 +30,9 @@ wpi.pinMode(CONFIG_PIN, wpi.OUTPUT);
 
 var connectCallback = function (err) {
   if (err) {
-    console.log('Could not connect: ' + err);
+    console.log('[Device] Could not connect: ' + err);
   } else {
-    console.log('Client connected');
+    console.log('[Device] Client connected');
 
     sendMessageAndBlink();
   }
@@ -46,7 +46,7 @@ function sendMessageAndBlink() {
 
 function sendMessageCallback(err) {
   if (err) {
-    console.log('Message error: ' + err.toString());
+    console.log('[Device] Message error: ' + err.toString());
     return;
   }
 
