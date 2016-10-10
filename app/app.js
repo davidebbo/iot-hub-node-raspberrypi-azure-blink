@@ -61,7 +61,10 @@ function sendMessageCallback(err) {
     setTimeout(sendMessageAndBlink, 2000);
   }
   else {
-    process.exit();
+    // Wait 5 more seconds to exit so that Azure function has the chance to process sent messages.
+    setTimeout(function() {
+      process.exit();
+    }, 5000);
   }
 }
 
