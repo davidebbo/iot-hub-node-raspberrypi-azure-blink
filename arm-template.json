@@ -129,7 +129,7 @@
                   "name": "iotHubMessage",
                   "direction": "in",
                   "type": "eventHubTrigger",
-                  "path": "[parameters('iotHubName')]",
+                  "path": "[reference(variables('iotHubResourceId'), variables('iotHubVersion')).eventHubEndpoints.events.path]",
                   "connection": "AzureIoTHubEventHubConnectionString"
                 },
                 {
